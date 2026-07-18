@@ -5,5 +5,8 @@
     "name": "Air-Erik"
   },
   "repository": "https://github.com/ErnsetAirapetov/air-harness",
-  "hooks": "./hooks/hooks.json"
+  "hooks": "./hooks/hooks.json",
+  "dependencies": [
+    { "name": "superpowers", "marketplace": "claude-plugins-official" }
+  ]
 }

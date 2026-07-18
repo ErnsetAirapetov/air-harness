@@ -5,6 +5,7 @@
   },
   "description": "Личный харнес для работы с роем агентов: процесс, роли, ритуалы, гейты",
   "repository": "https://github.com/ErnsetAirapetov/air-harness",
+  "allowCrossMarketplaceDependenciesOn": ["claude-plugins-official"],
   "plugins": [
     {
       "name": "harness-core",
