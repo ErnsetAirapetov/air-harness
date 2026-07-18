@@ -10,6 +10,7 @@ const DEFAULTS = {
   ownerEmail: '',
   worktreeDir: '.claude/worktrees',
   checks: [],
+  editChecks: [],
   strict: true,
 }
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// SubagentStop-гейт: не даёт агенту закончить задачу молча с красными
+// Stop/SubagentStop-гейт: не даёт закончить работу молча с красными
 // проверками. Команды проверок берутся из .claude/harness.json целевого
 // проекта — скрипт не знает ни про npm, ни про pytest, ни про cargo.
 //
@@ -10,6 +10,14 @@ import { execSync } from 'node:child_process'
 import { loadConfig, readHookInput } from './harness-config.mjs'
 
 const input = await readHookInput()
+
+// Этот стоп уже блокировался нами — выходим, иначе красные проверки
+// зациклят завершение (стоп → exit 2 → работа → стоп → ...).
+if (input?.stop_hook_active) process.exit(0)
+
+// cwd входа хука указывает туда, где реально работал агент — в его worktree.
+// findConfig идёт вверх и находит копию harness.json в чекауте worktree,
+// поэтому root становится worktree-каталогом, а не основным чекаутом.
 const cwd = input?.cwd || process.env.CLAUDE_PROJECT_DIR || process.cwd()
 const cfg = loadConfig(cwd)
 
