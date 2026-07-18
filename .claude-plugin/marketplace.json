@@ -1,0 +1,16 @@
+{
+  "name": "air-harness",
+  "owner": {
+    "name": "Air-Erik"
+  },
+  "description": "Личный харнес для работы с роем агентов: процесс, роли, ритуалы, гейты",
+  "repository": "https://github.com/ErnsetAirapetov/air-harness",
+  "plugins": [
+    {
+      "name": "harness-core",
+      "displayName": "Harness Core",
+      "description": "Оркестрация роя: роли агентов, ритуалы, git-гейты, инициализация проектов",
+      "source": "./core"
+    }
+  ]
+}

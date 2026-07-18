@@ -1,0 +1,9 @@
+{
+  "name": "harness-core",
+  "description": "Процесс работы роем: задача -> ветка -> worktree -> PR -> ревью -> мерж -> уборка. Роли агентов, ритуалы владельца, гейты качества, инициализация новых проектов.",
+  "author": {
+    "name": "Air-Erik"
+  },
+  "repository": "https://github.com/ErnsetAirapetov/air-harness",
+  "hooks": "./hooks/hooks.json"
+}
