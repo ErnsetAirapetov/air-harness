@@ -68,9 +68,9 @@ claude plugin validate ./core      # манифест плагина
 - `run-checks.mjs` доверяет `cwd` из входа хука как каталогу, где работал
   агент (в проектной версии ink-arena это подтверждено вживую). Проверить то
   же для плагинной подписки на `SubagentStop` при живом прогоне.
-- Формат `enabledPlugins` / `extraKnownMarketplaces` в settings.json сверить
-  с актуальной документацией Claude Code при первом подключении через
-  маркетплейс (до этого работаем через `--plugin-dir`).
+- Формат `enabledPlugins` / `extraKnownMarketplaces` подтверждён живой
+  установкой (объект `{"plugin@marketplace": true}`; в маркетплейсе работает
+  `"autoUpdate": true`).
 - Если на `Stop` и `SubagentStop` проверки будут гоняться дважды за один цикл —
   оставить только `SubagentStop`.
 - Проверить вживую SessionStart-инъекцию: stdout хука попадает в контекст на
