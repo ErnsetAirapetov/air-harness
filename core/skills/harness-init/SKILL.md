@@ -72,10 +72,34 @@ GitHub:
 | смержить PR | gh pr merge <N> --squash --delete-branch |
 ```
 
-GitLab — та же таблица с `glab`: `glab issue list/view/create/close`,
-`glab mr list/view/diff`, `glab mr create --target-branch <главная>`
-(в теле: `Closes #N`), `glab mr merge <N> --squash --remove-source-branch`,
-метки через `glab issue update <N> --label`.
+GitLab:
+
+```markdown
+Фордж: GitLab (glab CLI)
+
+| действие | команда |
+|---|---|
+| список задач | glab issue list --output json |
+| прочитать задачу | glab issue view <N> |
+| создать задачу | glab issue create -t "<t>" -d "$(cat <f>)" -l <l> -y |
+| комментарий к задаче | glab issue note <N> -m "<текст>" |
+| пометить решением | glab issue update <N> --label needs-decision |
+| закрыть задачу | glab issue note <N> -m "<итог>" && glab issue close <N> |
+| список MR | glab mr list --output json |
+| прочитать MR / дифф | glab mr view <N> / glab mr diff <N> |
+| создать MR | glab mr create -b <главная> -t "<t>" -d "<b>" -y (в описании: Closes #N) |
+| смержить MR | glab mr merge <N> --squash --remove-source-branch -y |
+
+Нюансы:
+- без -t/-d/-y glab открывает интерактивный редактор — агенту он недоступен,
+  поэтому флаги в командах обязательны;
+- glab mr merge при работающем пайплайне ставит auto-merge (мерж после
+  зелёного пайплайна) — обычно это и нужно; мержить немедленно:
+  добавь --auto-merge=false;
+- Closes #N в описании MR закрывает задачу при мерже.
+```
+
+Self-hosted GitLab: перед первой работой `glab auth login --hostname <хост>`.
 
 ### `.claude/orchestrator.md` — персона оркестратора
 
