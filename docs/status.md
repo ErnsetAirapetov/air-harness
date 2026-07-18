@@ -13,8 +13,9 @@
 | `core/scripts/guard-git.mjs` — гейт git-процесса | готово, 24 тест-кейса |
 | `core/scripts/run-checks.mjs` — гейт проверок (Stop + SubagentStop) | готово, worktree-aware, 8 тест-кейсов |
 | `core/scripts/edit-checks.mjs` — проверки после правки (PostToolUse) | готово, 5 тест-кейсов |
-| `core/agents/` — impl, reviewer, groomer | готово |
-| `core/commands/` — /board, /task, /land, /groom | готово, **на живом проекте не прогнаны** |
+| `core/agents/` — impl, reviewer, groomer, scaffolder | готово |
+| `core/commands/` — /board, /task, /land, /groom, /handoff | готово, **на живом проекте не прогнаны** |
+| `core/scripts/orchestrator-context.mjs` — хартия + персона + хендофф в SessionStart | готово, прогнан с примерами входа |
 | `core/skills/harness-init` | готово, **на живом проекте не прогнан** |
 | `docs/ink-arena-migration.md` — комплект миграции подопытного | готово |
 
@@ -71,6 +72,12 @@ claude plugin validate ./core      # манифест плагина
   маркетплейс (до этого работаем через `--plugin-dir`).
 - Если на `Stop` и `SubagentStop` проверки будут гоняться дважды за один цикл —
   оставить только `SubagentStop`.
+- Проверить вживую SessionStart-инъекцию: stdout хука попадает в контекст на
+  всех трёх matcher-ах (startup / clear / compact), хартия не дублируется,
+  её токен-стоимость терпима (~250 токенов на сессию).
+- Автоперезапуск по 5-часовому лимиту — полуручной (планировщик ОС по
+  `/handoff limit`): изнутри сессии остаток лимита не виден, лучшего
+  механизма у платформы нет. Пересмотреть, когда появится.
 - Проверить при живом прогоне зависимость `superpowers`: автоустановку при
   установке harness-core через маркетплейс и доступность скиллов
   `superpowers:*` внутри сабагента `impl` (у него полный набор инструментов,
