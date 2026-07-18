@@ -73,7 +73,8 @@ Issues означал переделку всего.
   "mainBranch": "main",
   "ownerEmail": "eriktarakan@gmail.com",
   "worktreeDir": ".claude/worktrees",
-  "checks": ["npm test", "npx tsc --noEmit"]
+  "checks": ["npm test", "npx tsc --noEmit"],
+  "editChecks": [{ "match": "\\.(ts|tsx)$", "run": "npx tsc --noEmit" }]
 }
 ```
 
