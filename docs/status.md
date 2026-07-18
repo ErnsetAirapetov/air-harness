@@ -10,6 +10,7 @@
 | Компонент | Статус |
 |---|---|
 | `docs/` — архитектура, принципы, спецификация init | готово |
+| `docs/task-hierarchy.md` — схема Веха→Эпик→Задача + ось `area:*` | готово |
 | `core/scripts/guard-git.mjs` — гейт git-процесса | готово, 24 тест-кейса |
 | `core/scripts/run-checks.mjs` — гейт проверок (Stop + SubagentStop) | готово, worktree-aware, 8 тест-кейсов |
 | `core/scripts/edit-checks.mjs` — проверки после правки (PostToolUse) | готово, 5 тест-кейсов |

@@ -82,6 +82,14 @@
 
 В `.gitignore` дописать `.claude/handoff.md` (сессионный файл, не для истории).
 
+Переименовать метки направлений — «эпик» теперь уровень иерархии
+(см. [task-hierarchy.md](task-hierarchy.md)), направления — `area:*`:
+
+```bash
+gh label list | grep "epic:"   # для каждой:
+gh label edit "epic:combat" --name "area:combat"
+```
+
 ## 6. Чек-лист живого прогона (принцип 8)
 
 1. В ink-arena: `claude --plugin-dir D:\Repos\air-harness\core`.
