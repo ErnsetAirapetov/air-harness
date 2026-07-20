@@ -66,6 +66,9 @@ GitHub:
 | комментарий к задаче | gh issue comment <N> -b "<текст>" |
 | пометить решением | gh issue edit <N> --add-label needs-decision |
 | закрыть задачу | gh issue close <N> -c "<итог>" |
+| создать милстоун | gh api repos/{owner}/{repo}/milestones -f title="<t>" |
+| создать задачу с милстоуном | gh issue create --title "<t>" --body-file <f> --label <l> --milestone "<t>" |
+| закрыть милстоун | gh api -X PATCH repos/{owner}/{repo}/milestones/<num> -f state=closed |
 | список PR | gh pr list --json number,title,headRefName,statusCheckRollup |
 | прочитать PR / дифф | gh pr view <N> / gh pr diff <N> |
 | создать PR | gh pr create --base <главная> --title "<t>" --body "<b>" (в теле: Closes #N) |
@@ -85,6 +88,9 @@ GitLab:
 | комментарий к задаче | glab issue note <N> -m "<текст>" |
 | пометить решением | glab issue update <N> --label needs-decision |
 | закрыть задачу | glab issue note <N> -m "<итог>" && glab issue close <N> |
+| создать милстоун | glab api projects/:id/milestones -f title="<t>" |
+| создать задачу с милстоуном | glab issue create -t "<t>" -d "$(cat <f>)" -l <l> -m "<t>" -y |
+| закрыть милстоун | glab api projects/:id/milestones/<id> -X PUT -f state_event=close |
 | список MR | glab mr list --output json |
 | прочитать MR / дифф | glab mr view <N> / glab mr diff <N> |
 | создать MR | glab mr create -b <главная> -t "<t>" -d "<b>" -y (в описании: Closes #N) |
@@ -192,9 +198,11 @@ scaffolder не перезаписывает.
   `size:S|M|L`, потоковые `needs-decision`, `blocked`.
 - Дефолтные метки форджа (`bug`, `enhancement`, `question`…) предложи удалить —
   они дублируют оси; в живом репозитории покажи список и дождись подтверждения.
-- Иерархия работ: Веха `M1` → Эпик `M1-E2` (tracking-задача `[M1-E2] Название`)
-  → Задача (`[M1-E2-T3] Название`); внеплановые fix/chore — без кода. Первую
-  веху с эпиками закладывает scaffolder в `docs/roadmap.md`.
+- Иерархия работ: Веха `M1` (только `docs/roadmap.md`, на фордж не
+  выносится) → Эпик `M1-E2` (милстоун форджа `[M1-E2] Название`) → Задача
+  (`[M1-E2-T3] Название`, привязана к милстоуну эпика); внеплановые
+  fix/chore — без кода. Первую веху с эпиками закладывает scaffolder в
+  `docs/roadmap.md`; милстоуны эпиков заводит groomer при декомпозиции.
 - Шаблон задачи (`.github/ISSUE_TEMPLATE/task.yml` для GitHub,
   `.gitlab/issue_templates/task.md` для GitLab) с обязательными разделами:
   Контекст, Задача, Критерии приёмки, Границы, Модель.
