@@ -1,6 +1,6 @@
 ---
 name: harness-init
-description: Развернуть харнес в репозитории — пустом или живом. Создаёт привязки (.claude/harness.json, forge.md, settings.json), метки и шаблон задачи на доске. Используй, когда просят инициализировать проект под харнес, настроить доску задач или подключить процесс работы агентами.
+description: Развернуть харнес в репозитории — пустом или живом. Создаёт привязки (.claude/harness.json, forge.md, settings.json), метки и шаблон задачи на доске, настраивает защиту главной ветки на фордже. Используй, когда просят инициализировать проект под харнес, настроить доску задач или подключить процесс работы агентами.
 ---
 
 Ты разворачиваешь харнес в текущем репозитории. Спецификация процедуры —
@@ -101,6 +101,47 @@ GitLab:
 
 Self-hosted GitLab: перед первой работой `glab auth login --hostname <хост>`.
 
+### Гейты на фордже
+
+Локальные хуки — быстрая обратная связь; настоящий забор — защита главной
+ветки на сервере форджа.
+
+GitHub — тело запроса запиши в файл и подай через `--input`; `checks` —
+имена job'ов реального CI проекта (CI нет — `"required_status_checks": null`):
+
+```bash
+gh api -X PUT repos/{owner}/{repo}/branches/<главная>/protection --input protection.json
+```
+
+```json
+{
+  "required_status_checks": { "strict": true, "checks": [{ "context": "<job CI>" }] },
+  "enforce_admins": true,
+  "required_pull_request_reviews": null,
+  "restrictions": null,
+  "allow_force_pushes": false
+}
+```
+
+Нюансы:
+- `required_pull_request_reviews: null` — соло-владелец работает без
+  обязательных апрувов;
+- на бесплатном плане GitHub защита веток работает только в публичных
+  репозиториях — для приватного на Free шаг пропусти и предупреди владельца.
+
+GitLab — дефолтная ветка защищена по умолчанию, но с правом пуша для
+Maintainers, поэтому защиту перезаведи (пуш — никому, мерж — Maintainers)
+и включи merge-чеки:
+
+```bash
+glab api projects/:id/protected_branches/<главная> -X DELETE
+glab api projects/:id/protected_branches -X POST -f name=<главная> -f push_access_level=0 -f merge_access_level=40
+glab api projects/:id -X PUT -f only_allow_merge_if_pipeline_succeeds=true -f remove_source_branch_after_merge=true
+```
+
+Нюанс: `only_allow_merge_if_pipeline_succeeds=true` включай, только если в
+проекте реально есть CI-пайплайн — иначе MR перестанут мержиться вовсе.
+
 ### `.claude/orchestrator.md` — персона оркестратора
 
 Имя и проектные инструкции главного агента; SessionStart-хук харнеса вложит
@@ -164,6 +205,10 @@ scaffolder не перезаписывает.
 
 - `.claude/harness.json` валиден, команды из `checks` реально запускаются;
 - метки перечитаны с форджа (не поверил своей же команде);
+- защита главной ветки перечитана с форджа: GitHub — GET
+  `repos/{owner}/{repo}/branches/<главная>/protection` отвечает 200 и
+  `required_status_checks` непустой; GitLab — GET `projects/:id/protected_branches`
+  показывает `push_access_level: 0`. Верь фактическому состоянию, не своей команде;
 - шаблон задачи на месте; `git status` показан владельцу;
 - гейт git-процесса работает: собери в Node вход
   `{"cwd":"<корень>","tool_input":{"command":"git commit -m x"}}`, подай его
