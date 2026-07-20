@@ -4,8 +4,5 @@
   "author": {
     "name": "Air-Erik"
   },
-  "repository": "https://github.com/ErnsetAirapetov/air-harness",
-  "dependencies": [
-    { "name": "superpowers", "marketplace": "claude-plugins-official" }
-  ]
+  "repository": "https://github.com/ErnsetAirapetov/air-harness"
 }
