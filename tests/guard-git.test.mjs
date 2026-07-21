@@ -37,6 +37,17 @@ mkdirSync(path.join(proj, 'sub dir'), { recursive: true })
 const wt = path.join(proj, 'wt dir')
 git('worktree', 'add', wt, '-b', 'feat/task-2')
 
+// Файлы сообщений для `git commit -F`. Путь нарочно содержит .claude — раньше
+// это ложно срабатывало как «упоминание ассистента». Теперь проверка смотрит
+// СОДЕРЖИМОЕ файла, а не путь.
+const msgDir = path.join(proj, '.claude', 'worktrees')
+mkdirSync(msgDir, { recursive: true })
+const cleanMsg = path.join(msgDir, 'msg-clean.txt')
+const dirtyMsg = path.join(msgDir, 'msg-dirty.txt')
+const missMsg = path.join(msgDir, 'msg-missing.txt') // намеренно не создаём
+writeFileSync(cleanMsg, 'feat: чистое сообщение без трейлеров\n')
+writeFileSync(dirtyMsg, 'feat: x\n\nCo-Authored-By: Someone <a@b>\n')
+
 const run = (command) => {
   const input = JSON.stringify({ cwd: proj, tool_input: { command } })
   try {
@@ -60,6 +71,11 @@ const ON_MAIN = [
   ['ПРОП', 'коммит в worktree ветки через git -C', `git -C "${wt}" commit -m "feat: x"`],
   ['ПРОП', 'посторонняя команда', 'npm test'],
   ['ПРОП', 'чтение состояния', 'git status'],
+  // Дыра-обход: флаг между `git` и `commit` раньше не ловился ни одной проверкой.
+  ['БЛОК', 'git -C dir commit — закрытие обхода', `git -C "${proj}" commit -m "feat: x"`],
+  // Подстрока `git commit` внутри кавычки-аргумента НЕ-git команды — не коммит.
+  ['ПРОП', 'git commit в заголовке не-git команды', 'gh issue create -t "чинил git commit -F в проекте" -F body.md'],
+  ['ПРОП', 'echo с текстом git commit', 'echo "git commit"'],
 ]
 
 const ON_BRANCH = [
@@ -78,6 +94,15 @@ const ON_BRANCH = [
   ['БЛОК', 'короткий -n у commit', 'git commit -n -m "feat: x"'],
   ['БЛОК', 'force push', 'git push --force origin feat/task-1'],
   ['БЛОК', 'reset --hard на главную', 'git reset --hard origin/trunk'],
+  // -F: сканируется СОДЕРЖИМОЕ файла, а не путь (в пути есть .claude).
+  ['ПРОП', 'commit -F, чистое содержимое, .claude в пути', `git commit -F "${cleanMsg}"`],
+  ['БЛОК', 'commit -F, Co-Authored-By в содержимом', `git commit -F "${dirtyMsg}"`],
+  ['ПРОП', 'commit -F, файл ещё не создан — не блокируем', `git commit -F "${missMsg}"`],
+  // `claude` регистрозависимо: CLAUDE.md — легитимная ссылка на файл харнеса.
+  ['ПРОП', 'CLAUDE.md в сообщении — регистрозависимый Claude', 'git commit -m "docs: обновить CLAUDE.md"'],
+  ['БЛОК', 'прозаический Claude в сообщении', 'git commit -m "фикс от Claude"'],
+  // `-n` внутри текста сообщения — не флаг обхода хуков.
+  ['ПРОП', '-n в тексте сообщения, а не флаг', 'git commit -m "текст про -n в сообщении"'],
 ]
 
 let failed = 0
